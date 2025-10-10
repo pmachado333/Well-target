@@ -1,0 +1,460 @@
+<!-- /well-target-generator/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Well Target Generator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root{
+      /* SLB-inspired palette */
+      --slb-blue:#0033A1;
+      --slb-navy:#001C5A;
+      --slb-accent:#1F6FFF;
+      --slb-bg:#F2F5FA;
+      --slb-card:#FFFFFF;
+      --slb-text:#0A1633;
+      --slb-muted:#6B778C;
+      --slb-border:#E2E8F0;
+      --radius:14px;
+      --shadow:0 6px 20px rgba(0,0,0,0.08);
+    }
+    *,*::before,*::after{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      background:linear-gradient(180deg,var(--slb-bg),#fff 35%);
+      color:var(--slb-text);
+    }
+    header{
+      background:linear-gradient(90deg,var(--slb-navy),var(--slb-blue));
+      color:#fff; padding:28px 20px;
+      position:sticky; top:0; z-index:10; box-shadow:var(--shadow);
+    }
+    header h1{margin:0; font-weight:700; letter-spacing:.2px}
+    header p{margin:6px 0 0; color:#D7E3FF}
+
+    .container{max-width:1200px; margin:18px auto; padding:0 16px}
+    .card{
+      background:var(--slb-card); border:1px solid var(--slb-border);
+      border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden;
+    }
+    .toolbar{
+      display:flex; flex-wrap:wrap; gap:10px; padding:14px; align-items:center; border-bottom:1px solid var(--slb-border);
+      background:linear-gradient(180deg,#fff,var(--slb-bg));
+    }
+    .btn{
+      appearance:none; border:none; border-radius:12px; padding:10px 14px; font-weight:600; cursor:pointer;
+      background:var(--slb-blue); color:#fff; transition:transform .03s ease, box-shadow .2s ease, background .2s ease;
+      box-shadow:0 1px 0 rgba(255,255,255,.2) inset, 0 6px 16px rgba(0,0,0,.08);
+    }
+    .btn:hover{background:var(--slb-accent)}
+    .btn:active{transform:translateY(1px)}
+    .btn.secondary{background:#fff; color:var(--slb-blue); border:1px solid var(--slb-border)}
+    .btn.warning{background:#D92D20}
+    .hint{color:var(--slb-muted); font-size:12px}
+
+    .table-wrap{overflow:auto; max-height:60vh}
+    table{width:100%; border-collapse:separate; border-spacing:0; table-layout:auto}
+    thead th{
+      position:sticky; top:0; background:linear-gradient(180deg,#EFF4FF,#E7EEFF);
+      color:var(--slb-navy); font-size:13px; letter-spacing:.2px; border-bottom:1px solid var(--slb-border); padding:8px 10px; text-align:left; z-index:2;
+    }
+    thead th .th-sub{display:block; font-weight:500; color:var(--slb-muted); font-size:11px; margin-top:2px; line-height:1.25}
+    tbody td{border-bottom:1px solid var(--slb-border); padding:6px; vertical-align:top}
+    tbody tr:hover{background:#F9FBFF}
+    input[type="text"], input[type="number"], select{
+      width:100%; max-width:100%; min-width:0;
+      display:block;
+      padding:10px 10px; border:1px solid var(--slb-border); border-radius:10px; background:#fff; color:var(--slb-text);
+      font-size:14px; outline:none; transition:border .2s ease, box-shadow .2s ease;
+    }
+    input:focus, select:focus{border-color:var(--slb-accent); box-shadow:0 0 0 3px rgba(31,111,255,.15)}
+    td.action{white-space:nowrap}
+    .remove-btn{border:none; background:#fff; color:#C02020; padding:8px 10px; border-radius:10px; cursor:pointer; border:1px solid var(--slb-border)}
+    .remove-btn:hover{background:#FFECEC}
+
+    .footer{
+      display:grid; gap:14px; padding:16px; border-top:1px solid var(--slb-border); background:#fafcff;
+    }
+    .summary{
+      display:grid; gap:10px; grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    }
+    .pill{
+      background:#fff; border:1px solid var(--slb-border); border-radius:12px; padding:12px; box-shadow:var(--shadow)
+    }
+    .pill h4{margin:0 0 6px 0; font-size:13px; color:var(--slb-muted); font-weight:600}
+    .pill div{font-size:16px; font-weight:700}
+    .download{
+      display:flex; gap:10px; align-items:center; justify-content:space-between; flex-wrap:wrap
+    }
+    .download a{
+      text-decoration:none; border:1px solid var(--slb-border); padding:10px 14px; border-radius:12px; color:var(--slb-blue); background:#fff; font-weight:600
+    }
+    .kbd{font-family:ui-monospace,SFMono-Regular,Menlo,monospace; background:#eef2ff; color:#3730a3; padding:2px 6px; border-radius:6px; border:1px solid #c7d2fe}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Well Target Generator</h1>
+    <p>By Patrick Machado</p>
+  </header>
+
+  <main class="container">
+    <section class="card" aria-label="Well table">
+      <div class="toolbar">
+        <button id="addOne" class="btn">+ Add 1 well</button>
+        <button id="addMany" class="btn secondary">+ Add N wells</button>
+        <button id="clear" class="btn warning">Clear all</button>
+        <button id="generate" class="btn" style="margin-left:auto">Generate JSON</button>
+        <span class="hint">Paste from Excel Enabled</span>
+      </div>
+
+      <div class="table-wrap">
+        <table id="wellsTable">
+          <thead>
+            <tr>
+              <th style="min-width:180px">Well Name
+                <span class="th-sub">Unique ID (e.g., P1, P2)</span>
+              </th>
+              <th style="min-width:130px">Type
+                <span class="th-sub">Select <b>producer</b> or <b>injector</b></span>
+              </th>
+              <th style="min-width:130px">Fluid
+                <span class="th-sub">Choose <b>oil</b>, <b>gas</b>, or <b>water</b></span>
+              </th>
+              <th style="min-width:120px">Target X
+                <span class="th-sub">X coordinate (m)</span>
+              </th>
+              <th style="min-width:120px">Target Y
+                <span class="th-sub">Y coordinate (m)</span>
+              </th>
+              <th style="min-width:140px">Target Z (start)
+                <span class="th-sub">Negative depth (m). Auto → negative.</span>
+              </th>
+              <th style="min-width:140px">Interval (ΔZ)
+                <span class="th-sub">Positive thickness (m). End = start − ΔZ.</span>
+              </th>
+              <th style="min-width:80px">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+
+      <div class="footer">
+        <div id="summary" class="summary" aria-live="polite"></div>
+        <div class="download">
+          <div class="hint" id="fileMeta">No JSON generated yet.</div>
+          <a id="downloadLink" href="#" download style="display:none">Download JSON</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <template id="rowTemplate">
+    <tr>
+      <td><input type="text" placeholder="e.g., P1" aria-label="Well name"></td>
+      <td>
+        <select aria-label="Well type">
+          <option value="producer">producer</option>
+          <option value="injector">injector</option>
+        </select>
+      </td>
+      <td>
+        <select aria-label="Fluid type">
+          <option value="oil">oil</option>
+          <option value="gas">gas</option>
+          <option value="water">water</option>
+        </select>
+      </td>
+      <td><input type="number" step="any" placeholder="x" aria-label="Target X"></td>
+      <td><input type="number" step="any" placeholder="y" aria-label="Target Y"></td>
+      <td><input type="number" step="any" placeholder="-6000" aria-label="Target Z start"></td>
+      <td><input type="number" step="any" placeholder="200" aria-label="Interval"></td>
+      <td class="action"><button class="remove-btn" title="Remove row">Remove</button></td>
+    </tr>
+  </template>
+
+  <script>
+    // DOM refs
+    const tbody = document.getElementById('tbody');
+    const rowTpl = document.getElementById('rowTemplate');
+    const addOneBtn = document.getElementById('addOne');
+    const addManyBtn = document.getElementById('addMany');
+    const clearBtn = document.getElementById('clear');
+    const genBtn = document.getElementById('generate');
+    const summaryEl = document.getElementById('summary');
+    const linkEl = document.getElementById('downloadLink');
+    const fileMetaEl = document.getElementById('fileMeta');
+
+    // Row helpers
+    function addRow(defaults={}){
+      const node = rowTpl.content.firstElementChild.cloneNode(true);
+      const [nm, typ, flu, x, y, z, intv] = node.querySelectorAll('input,select');
+      nm.value = defaults.name ?? '';
+      typ.value = defaults.type ?? 'producer';
+      flu.value = defaults.fluid ?? 'oil';
+      x.value = defaults.x ?? '';
+      y.value = defaults.y ?? '';
+      z.value = defaults.z ?? '';
+      intv.value = defaults.interval ?? '';
+      tbody.appendChild(node);
+    }
+    function addRows(n){
+      n = Math.max(1, Math.min(Number(n)||0, 5000));
+      const frag = document.createDocumentFragment();
+      for(let i=0;i<n;i++) frag.appendChild(rowTpl.content.firstElementChild.cloneNode(true));
+      tbody.appendChild(frag);
+    }
+    function ensureRows(count){
+      const need = count - tbody.rows.length;
+      if (need > 0) addRows(need);
+    }
+    function clearAll(){
+      tbody.innerHTML = '';
+      addRow();
+      linkEl.style.display = 'none';
+      fileMetaEl.textContent = 'Cleared. No JSON generated yet.';
+      summaryEl.innerHTML = '';
+    }
+
+    // Normalizers
+    function normalizeType(v){
+      const s = String(v||'').trim().toLowerCase();
+      if (s.startsWith('p')) return 'producer';
+      if (s.startsWith('inj') || s === 'i' || s.startsWith('in')) return 'injector';
+      return (s === 'producer' || s === 'injector') ? s : 'producer';
+    }
+    function normalizeFluid(v){
+      const s = String(v||'').trim().toLowerCase();
+      if (s.startsWith('o')) return 'oil';
+      if (s.startsWith('g')) return 'gas';
+      if (s.startsWith('w')) return 'water';
+      return (s==='oil'||s==='gas'||s==='water')? s : 'oil';
+    }
+    function toNum(val){
+      const n = Number(String(val).replace(/,/g,'').trim());
+      return Number.isFinite(n) ? n : null;
+    }
+    function enforceNegativeZInput(el){
+      const n = toNum(el.value);
+      if (n === null){ el.value = ''; return; }
+      el.value = -Math.abs(n); // ensure negative
+    }
+    function enforcePositiveIntervalInput(el){
+      const n = toNum(el.value);
+      if (n === null){ el.value = ''; return; }
+      el.value = Math.abs(n); // ensure positive
+    }
+
+    // Data collection → JSON
+    function collect(){
+      const wells = [];
+      [...tbody.rows].forEach((tr) => {
+        const [nm, typ, flu, x, y, z, intv] = tr.querySelectorAll('input,select');
+        const name = nm.value.trim();
+        const type = typ.value;
+        const fluid_type = flu.value;
+
+        const xVal = toNum(x.value);
+        const yVal = toNum(y.value);
+        let zStart = toNum(z.value);
+        let interval = toNum(intv.value);
+
+        if (!name) return;
+        if (xVal===null || yVal===null || zStart===null || interval===null) return;
+
+        zStart = -Math.abs(zStart);       // enforce negative start
+        interval = Math.abs(interval);    // enforce positive interval
+
+        const zEnd = zStart - interval;   // end is lower number (more negative)
+
+        const start = { x: xVal, y: yVal, z: zStart };
+        const end   = { x: xVal, y: yVal, z: zEnd };
+
+        wells.push({
+          name,
+          type,
+          completion_intervals: [{ start, end }],
+          reservoir_trajectory: [ start, end ],
+          fluid_type
+        });
+      });
+      return wells;
+    }
+
+    // Summary
+    function stats(wells){
+      if (wells.length === 0) return null;
+      const counts = {
+        total: wells.length,
+        producer: wells.filter(w=>w.type==='producer').length,
+        injector: wells.filter(w=>w.type==='injector').length,
+        oil: wells.filter(w=>w.fluid_type==='oil').length,
+        gas: wells.filter(w=>w.fluid_type==='gas').length,
+        water: wells.filter(w=>w.fluid_type==='water').length
+      };
+      const intervals = wells.map(w => Math.abs(w.completion_intervals[0].start.z - w.completion_intervals[0].end.z));
+      const minI = Math.min(...intervals);
+      const maxI = Math.max(...intervals);
+      const avgI = intervals.reduce((a,b)=>a+b,0)/intervals.length;
+
+      const xs = wells.map(w=>w.completion_intervals[0].start.x);
+      const ys = wells.map(w=>w.completion_intervals[0].start.y);
+      const zsStart = wells.map(w=>w.completion_intervals[0].start.z);
+      const zsEnd = wells.map(w=>w.completion_intervals[0].end.z);
+
+      return {
+        counts,
+        intervals: { min:minI, max:maxI, avg:avgI },
+        ranges: {
+          x:[Math.min(...xs), Math.max(...xs)],
+          y:[Math.min(...ys), Math.max(...ys)],
+          z_start:[Math.min(...zsStart), Math.max(...zsStart)],
+          z_end:[Math.min(...zsEnd), Math.max(...zsEnd)]
+        }
+      };
+    }
+    function renderSummary(s){
+      if (!s){
+        summaryEl.innerHTML = '<div class="pill"><h4>No valid wells</h4><div>Enter rows with all numeric targets</div></div>';
+        return;
+      }
+      const fmt = (n)=> Number.isFinite(n)? (Math.round(n*100)/100).toString() : '—';
+      summaryEl.innerHTML = `
+        <div class="pill"><h4>Total wells</h4><div>${s.counts.total}</div></div>
+        <div class="pill"><h4>Producers / Injectors</h4><div>${s.counts.producer} / ${s.counts.injector}</div></div>
+        <div class="pill"><h4>Fluids (O/G/W)</h4><div>${s.counts.oil} / ${s.counts.gas} / ${s.counts.water}</div></div>
+        <div class="pill"><h4>Interval ΔZ (min / avg / max)</h4><div>${fmt(s.intervals.min)} / ${fmt(s.intervals.avg)} / ${fmt(s.intervals.max)}</div></div>
+        <div class="pill"><h4>X range</h4><div>${fmt(s.ranges.x[0])} – ${fmt(s.ranges.x[1])}</div></div>
+        <div class="pill"><h4>Y range</h4><div>${fmt(s.ranges.y[0])} – ${fmt(s.ranges.y[1])}</div></div>
+        <div class="pill"><h4>Z start range</h4><div>${fmt(s.ranges.z_start[0])} – ${fmt(s.ranges.z_start[1])}</div></div>
+        <div class="pill"><h4>Z end range</h4><div>${fmt(s.ranges.z_end[0])} – ${fmt(s.ranges.z_end[1])}</div></div>
+      `;
+    }
+
+    // Generate & download
+    function generateAndDownload(){
+      const wells = collect();
+      const payload = { reservoir_targets: wells };
+      const s = stats(wells);
+      renderSummary(s);
+
+      const text = JSON.stringify(payload, null, 2);
+      const sizeKB = (new TextEncoder().encode(text).length/1024).toFixed(1);
+
+      const blob = new Blob([text], {type:'application/json'});
+      const url = URL.createObjectURL(blob);
+      const ts = new Date();
+      const pad = (n)=>String(n).padStart(2,'0');
+      const fname = `reservoir_targets_${ts.getFullYear()}${pad(ts.getMonth()+1)}${pad(ts.getDate())}_${pad(ts.getHours())}${pad(ts.getMinutes())}${pad(ts.getSeconds())}.json`;
+
+      linkEl.href = url;
+      linkEl.download = fname;
+      linkEl.style.display = wells.length ? 'inline-block' : 'none';
+      fileMetaEl.textContent = wells.length ? `Generated ${wells.length} well(s) • ${sizeKB} KB • File: ${fname}` : 'No valid rows to export.';
+    }
+
+    // === Excel/CSV paste support ===
+    function splitLine(line){
+      if (line.includes('\t')) return line.split('\t');
+      return line.split(',');
+    }
+    function parseClipboard(text){
+      const lines = String(text||'').trim().split(/\r?\n/).filter(l=>l.trim().length>0);
+      return lines.map(splitLine);
+    }
+    function inputsForRow(tr){
+      return Array.from(tr.querySelectorAll('input,select')); // [name,type,fluid,x,y,z,interval]
+    }
+    function colIndexInRow(target){
+      const tr = target.closest('tr');
+      const arr = inputsForRow(tr);
+      return { tr, idx: Math.max(0, arr.indexOf(target)) };
+    }
+    function setCell(tr, colIdx, raw){
+      const cells = inputsForRow(tr);
+      if (!cells[colIdx]) return;
+      const el = cells[colIdx];
+      const val = String(raw ?? '').trim();
+      switch(colIdx){
+        case 0: el.value = val; break;                       // name
+        case 1: el.value = normalizeType(val); break;        // type
+        case 2: el.value = normalizeFluid(val); break;       // fluid
+        case 3: case 4: {                                    // x,y
+          const n = toNum(val);
+          if (n !== null) el.value = n;
+          break;
+        }
+        case 5: {                                            // z start (force negative)
+          const n = toNum(val);
+          if (n !== null) el.value = -Math.abs(n);
+          break;
+        }
+        case 6: {                                            // interval (force positive)
+          const n = toNum(val);
+          if (n !== null) el.value = Math.abs(n);
+          break;
+        }
+        default: break;
+      }
+    }
+    function pasteTable(startTarget, matrix){
+      const { tr: startRowEl, idx: startCol } = colIndexInRow(startTarget);
+      const startRowIdx = Array.from(tbody.rows).indexOf(startRowEl);
+      const neededRows = startRowIdx + matrix.length;
+      ensureRows(neededRows);
+
+      for (let r = 0; r < matrix.length; r++){
+        const rowEl = tbody.rows[startRowIdx + r];
+        const cells = matrix[r];
+        for (let c = 0; c < cells.length && (startCol + c) < 7; c++){
+          setCell(rowEl, startCol + c, cells[c]);
+        }
+      }
+    }
+
+    // Events
+    addOneBtn.addEventListener('click', ()=> addRow());
+    addManyBtn.addEventListener('click', ()=>{
+      const n = prompt('How many wells to add? (1–5000)', '10');
+      if (n !== null) addRows(n);
+    });
+    clearBtn.addEventListener('click', clearAll);
+    genBtn.addEventListener('click', generateAndDownload);
+    tbody.addEventListener('click', (e)=>{
+      if (e.target.closest('.remove-btn')) e.target.closest('tr')?.remove();
+    });
+
+    // Enforce rules on manual edits
+    tbody.addEventListener('change', (e)=>{
+      if (!(e.target instanceof HTMLInputElement)) return;
+      const { idx } = colIndexInRow(e.target);
+      if (idx === 5) enforceNegativeZInput(e.target);      // Z start
+      if (idx === 6) enforcePositiveIntervalInput(e.target); // Interval
+    });
+    tbody.addEventListener('blur', (e)=>{
+      if (!(e.target instanceof HTMLInputElement)) return;
+      const { idx } = colIndexInRow(e.target);
+      if (idx === 5) enforceNegativeZInput(e.target);
+      if (idx === 6) enforcePositiveIntervalInput(e.target);
+    }, true);
+
+    // Handle Excel/CSV paste anywhere in the table
+    tbody.addEventListener('paste', (e)=>{
+      const target = e.target;
+      if (!(target instanceof HTMLInputElement) && !(target instanceof HTMLSelectElement)) return;
+      const txt = e.clipboardData?.getData('text');
+      if (!txt) return;
+      const matrix = parseClipboard(txt);
+      if (matrix.length === 0) return;
+      e.preventDefault(); // distribute values to cells
+      pasteTable(target, matrix);
+    }, true);
+
+    // Init
+    addRow();
+  </script>
+</body>
+</html>
