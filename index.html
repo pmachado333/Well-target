@@ -7,91 +7,47 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     :root{
-      /* SLB-inspired palette */
-      --slb-blue:#0033A1;
-      --slb-navy:#001C5A;
-      --slb-accent:#1F6FFF;
-      --slb-bg:#F2F5FA;
-      --slb-card:#FFFFFF;
-      --slb-text:#0A1633;
-      --slb-muted:#6B778C;
-      --slb-border:#E2E8F0;
-      --radius:14px;
-      --shadow:0 6px 20px rgba(0,0,0,0.08);
+      --slb-blue:#0033A1; --slb-navy:#001C5A; --slb-accent:#1F6FFF;
+      --slb-bg:#F2F5FA; --slb-card:#FFFFFF; --slb-text:#0A1633; --slb-muted:#6B778C; --slb-border:#E2E8F0;
+      --radius:14px; --shadow:0 6px 20px rgba(0,0,0,0.08)
     }
     *,*::before,*::after{box-sizing:border-box}
     html,body{height:100%}
-    body{
-      margin:0; font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-      background:linear-gradient(180deg,var(--slb-bg),#fff 35%);
-      color:var(--slb-text);
-    }
-    header{
-      background:linear-gradient(90deg,var(--slb-navy),var(--slb-blue));
-      color:#fff; padding:28px 20px;
-      position:sticky; top:0; z-index:10; box-shadow:var(--shadow);
-    }
-    header h1{margin:0; font-weight:700; letter-spacing:.2px}
-    header p{margin:6px 0 0; color:#D7E3FF}
-
-    .container{max-width:1200px; margin:18px auto; padding:0 16px}
-    .card{
-      background:var(--slb-card); border:1px solid var(--slb-border);
-      border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden;
-    }
-    .toolbar{
-      display:flex; flex-wrap:wrap; gap:10px; padding:14px; align-items:center; border-bottom:1px solid var(--slb-border);
-      background:linear-gradient(180deg,#fff,var(--slb-bg));
-    }
-    .btn{
-      appearance:none; border:none; border-radius:12px; padding:10px 14px; font-weight:600; cursor:pointer;
-      background:var(--slb-blue); color:#fff; transition:transform .03s ease, box-shadow .2s ease, background .2s ease;
-      box-shadow:0 1px 0 rgba(255,255,255,.2) inset, 0 6px 16px rgba(0,0,0,.08);
-    }
-    .btn:hover{background:var(--slb-accent)}
-    .btn:active{transform:translateY(1px)}
-    .btn.secondary{background:#fff; color:var(--slb-blue); border:1px solid var(--slb-border)}
+    body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:linear-gradient(180deg,var(--slb-bg),#fff 35%);color:var(--slb-text)}
+    header{background:linear-gradient(90deg,var(--slb-navy),var(--slb-blue));color:#fff;padding:28px 20px;position:sticky;top:0;z-index:10;box-shadow:var(--shadow)}
+    header h1{margin:0;font-weight:700;letter-spacing:.2px}
+    header p{margin:6px 0 0;color:#D7E3FF}
+    .container{max-width:1200px;margin:18px auto;padding:0 16px}
+    .card{background:var(--slb-card);border:1px solid var(--slb-border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+    .toolbar{display:flex;flex-wrap:wrap;gap:10px;padding:14px;align-items:center;border-bottom:1px solid var(--slb-border);background:linear-gradient(180deg,#fff,var(--slb-bg))}
+    .btn{appearance:none;border:none;border-radius:12px;padding:10px 14px;font-weight:600;cursor:pointer;background:var(--slb-blue);color:#fff;transition:transform .03s ease,box-shadow .2s ease,background .2s ease;box-shadow:0 1px 0 rgba(255,255,255,.2) inset,0 6px 16px rgba(0,0,0,.08)}
+    .btn:hover{background:var(--slb-accent)} .btn:active{transform:translateY(1px)}
+    .btn.secondary{background:#fff;color:var(--slb-blue);border:1px solid var(--slb-border)}
     .btn.warning{background:#D92D20}
-    .hint{color:var(--slb-muted); font-size:12px}
-
-    .table-wrap{overflow:auto; max-height:60vh}
-    table{width:100%; border-collapse:separate; border-spacing:0; table-layout:auto}
-    thead th{
-      position:sticky; top:0; background:linear-gradient(180deg,#EFF4FF,#E7EEFF);
-      color:var(--slb-navy); font-size:13px; letter-spacing:.2px; border-bottom:1px solid var(--slb-border); padding:8px 10px; text-align:left; z-index:2;
-    }
-    thead th .th-sub{display:block; font-weight:500; color:var(--slb-muted); font-size:11px; margin-top:2px; line-height:1.25}
-    tbody td{border-bottom:1px solid var(--slb-border); padding:6px; vertical-align:top}
+    .hint{color:var(--slb-muted);font-size:12px}
+    .table-wrap{overflow:auto;max-height:60vh}
+    table{width:100%;border-collapse:separate;border-spacing:0;table-layout:auto}
+    thead th{position:sticky;top:0;background:linear-gradient(180deg,#EFF4FF,#E7EEFF);color:var(--slb-navy);font-size:13px;letter-spacing:.2px;border-bottom:1px solid var(--slb-border);padding:8px 10px;text-align:left;z-index:2}
+    thead th .th-sub{display:block;font-weight:500;color:var(--slb-muted);font-size:11px;margin-top:2px;line-height:1.25}
+    tbody td{border-bottom:1px solid var(--slb-border);padding:6px;vertical-align:top}
     tbody tr:hover{background:#F9FBFF}
-    input[type="text"], input[type="number"], select{
-      width:100%; max-width:100%; min-width:0;
-      display:block;
-      padding:10px 10px; border:1px solid var(--slb-border); border-radius:10px; background:#fff; color:var(--slb-text);
-      font-size:14px; outline:none; transition:border .2s ease, box-shadow .2s ease;
-    }
-    input:focus, select:focus{border-color:var(--slb-accent); box-shadow:0 0 0 3px rgba(31,111,255,.15)}
+    input[type="text"],input[type="number"],select{width:100%;display:block;padding:10px;border:1px solid var(--slb-border);border-radius:10px;background:#fff;color:var(--slb-text);font-size:14px;outline:none;transition:border .2s ease,box-shadow .2s ease}
+    input:focus,select:focus{border-color:var(--slb-accent);box-shadow:0 0 0 3px rgba(31,111,255,.15)}
     td.action{white-space:nowrap}
-    .remove-btn{border:none; background:#fff; color:#C02020; padding:8px 10px; border-radius:10px; cursor:pointer; border:1px solid var(--slb-border)}
+    .remove-btn{border:none;background:#fff;color:#C02020;padding:8px 10px;border-radius:10px;cursor:pointer;border:1px solid var(--slb-border)}
     .remove-btn:hover{background:#FFECEC}
-
-    .footer{
-      display:grid; gap:14px; padding:16px; border-top:1px solid var(--slb-border); background:#fafcff;
-    }
-    .summary{
-      display:grid; gap:10px; grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-    }
-    .pill{
-      background:#fff; border:1px solid var(--slb-border); border-radius:12px; padding:12px; box-shadow:var(--shadow)
-    }
-    .pill h4{margin:0 0 6px 0; font-size:13px; color:var(--slb-muted); font-weight:600}
-    .pill div{font-size:16px; font-weight:700}
-    .download{
-      display:flex; gap:10px; align-items:center; justify-content:space-between; flex-wrap:wrap
-    }
-    .download a{
-      text-decoration:none; border:1px solid var(--slb-border); padding:10px 14px; border-radius:12px; color:var(--slb-blue); background:#fff; font-weight:600
-    }
-    .kbd{font-family:ui-monospace,SFMono-Regular,Menlo,monospace; background:#eef2ff; color:#3730a3; padding:2px 6px; border-radius:6px; border:1px solid #c7d2fe}
+    .footer{display:grid;gap:14px;padding:16px;border-top:1px solid var(--slb-border);background:#fafcff}
+    .summary{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+    .pill{background:#fff;border:1px solid var(--slb-border);border-radius:12px;padding:12px;box-shadow:var(--shadow)}
+    .pill h4{margin:0 0 6px 0;font-size:13px;color:var(--slb-muted);font-weight:600}
+    .pill div{font-size:16px;font-weight:700}
+    .download{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+    .download a{text-decoration:none;border:1px solid var(--slb-border);padding:10px 14px;border-radius:12px;color:var(--slb-blue);background:#fff;font-weight:600}
+    .kbd{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#eef2ff;color:#3730a3;padding:2px 6px;border-radius:6px;border:1px solid #c7d2fe}
+    /* unit switcher */
+    .unit-switch{margin-left:auto;display:flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--slb-border);padding:6px 10px;border-radius:12px}
+    .unit-switch label{display:inline-flex;align-items:center;gap:4px;font-size:13px}
+    .unit-chip{display:inline-block;font-size:11px;padding:2px 6px;border:1px solid var(--slb-border);border-radius:10px;background:#fff;margin-left:6px}
   </style>
 </head>
 <body>
@@ -106,7 +62,15 @@
         <button id="addOne" class="btn">+ Add 1 well</button>
         <button id="addMany" class="btn secondary">+ Add N wells</button>
         <button id="clear" class="btn warning">Clear all</button>
-        <button id="generate" class="btn" style="margin-left:auto">Generate JSON</button>
+
+        <div class="unit-switch" id="unitSwitch">
+          <strong>Units:</strong>
+          <label><input type="radio" name="unit" value="m" checked> m</label>
+          <label><input type="radio" name="unit" value="ft"> ft</label>
+          <span class="hint">(converts all values)</span>
+        </div>
+
+        <button id="generate" class="btn">Generate JSON</button>
         <span class="hint">Paste from Excel Enabled</span>
       </div>
 
@@ -124,16 +88,16 @@
                 <span class="th-sub">Choose <b>oil</b>, <b>gas</b>, or <b>water</b></span>
               </th>
               <th style="min-width:120px">Target X
-                <span class="th-sub">X coordinate (m)</span>
+                <span class="th-sub">X coordinate (<span class="unit-tag">m</span>)</span>
               </th>
               <th style="min-width:120px">Target Y
-                <span class="th-sub">Y coordinate (m)</span>
+                <span class="th-sub">Y coordinate (<span class="unit-tag">m</span>)</span>
               </th>
-              <th style="min-width:140px">Target Z (start)
-                <span class="th-sub">Negative depth (m). Auto → negative.</span>
+              <th style="min-width:160px">Target Z (start)
+                <span class="th-sub">Negative depth (<span class="unit-tag">m</span>)</span>
               </th>
-              <th style="min-width:140px">Interval (ΔZ)
-                <span class="th-sub">Positive thickness (m). End = start − ΔZ.</span>
+              <th style="min-width:160px">Interval (ΔZ)
+                <span class="th-sub">Positive thickness (<span class="unit-tag">m</span>)</span>
               </th>
               <th style="min-width:80px">Actions</th>
             </tr>
@@ -177,18 +141,36 @@
   </template>
 
   <script>
-    // DOM refs
+    // WHY: IDs assume 'ft:1' exists in your reference-data; change UNIT_ID_MAP if different in your environment.
+    const UNIT_ID_MAP = {
+      m: "qa-weu-des-prod-testing-eu:reference-data--UnitOfMeasure:m:1",
+      ft: "qa-weu-des-prod-testing-eu:reference-data--UnitOfMeasure:ft:1"
+    };
+    const M_TO_FT = 3.28084;
+    const FT_TO_M = 0.3048;
+
+    let CURRENT_UNIT = 'm';
+
     const tbody = document.getElementById('tbody');
     const rowTpl = document.getElementById('rowTemplate');
     const addOneBtn = document.getElementById('addOne');
     const addManyBtn = document.getElementById('addMany');
     const clearBtn = document.getElementById('clear');
     const genBtn = document.getElementById('generate');
+    const unitSwitch = document.getElementById('unitSwitch');
     const summaryEl = document.getElementById('summary');
     const linkEl = document.getElementById('downloadLink');
     const fileMetaEl = document.getElementById('fileMeta');
 
-    // Row helpers
+    function unitLabel(){ return CURRENT_UNIT; }
+    function getCRS(unit){
+      const id = UNIT_ID_MAP[unit] || UNIT_ID_MAP.m;
+      return { XUnitOfMeasureID:id, YUnitOfMeasureID:id, ZUnitOfMeasureID:id };
+    }
+
+    function roundTo(n, d=3){ const p = 10**d; return Math.round(n*p)/p; }
+    function setRounded(el, val){ const v = roundTo(val); el.value = Number.isFinite(v)? String(v) : ''; }
+
     function addRow(defaults={}){
       const node = rowTpl.content.firstElementChild.cloneNode(true);
       const [nm, typ, flu, x, y, z, intv] = node.querySelectorAll('input,select');
@@ -219,7 +201,6 @@
       summaryEl.innerHTML = '';
     }
 
-    // Normalizers
     function normalizeType(v){
       const s = String(v||'').trim().toLowerCase();
       if (s.startsWith('p')) return 'producer';
@@ -240,15 +221,14 @@
     function enforceNegativeZInput(el){
       const n = toNum(el.value);
       if (n === null){ el.value = ''; return; }
-      el.value = -Math.abs(n); // ensure negative
+      el.value = -Math.abs(n);
     }
     function enforcePositiveIntervalInput(el){
       const n = toNum(el.value);
       if (n === null){ el.value = ''; return; }
-      el.value = Math.abs(n); // ensure positive
+      el.value = Math.abs(n);
     }
 
-    // Data collection → JSON
     function collect(){
       const wells = [];
       [...tbody.rows].forEach((tr) => {
@@ -256,35 +236,25 @@
         const name = nm.value.trim();
         const type = typ.value;
         const fluid_type = flu.value;
-
         const xVal = toNum(x.value);
         const yVal = toNum(y.value);
         let zStart = toNum(z.value);
         let interval = toNum(intv.value);
-
         if (!name) return;
         if (xVal===null || yVal===null || zStart===null || interval===null) return;
 
-        zStart = -Math.abs(zStart);       // enforce negative start
-        interval = Math.abs(interval);    // enforce positive interval
-
-        const zEnd = zStart - interval;   // end is lower number (more negative)
+        zStart = -Math.abs(zStart);
+        interval = Math.abs(interval);
+        const zEnd = zStart - interval;
 
         const start = { x: xVal, y: yVal, z: zStart };
         const end   = { x: xVal, y: yVal, z: zEnd };
 
-        wells.push({
-          name,
-          type,
-          completion_intervals: [{ start, end }],
-          reservoir_trajectory: [ start, end ],
-          fluid_type
-        });
+        wells.push({ name, type, completion_intervals:[{ start, end }], reservoir_trajectory:[ start, end ], fluid_type });
       });
       return wells;
     }
 
-    // Summary
     function stats(wells){
       if (wells.length === 0) return null;
       const counts = {
@@ -316,28 +286,32 @@
         }
       };
     }
+
     function renderSummary(s){
+      const unit = unitLabel();
       if (!s){
         summaryEl.innerHTML = '<div class="pill"><h4>No valid wells</h4><div>Enter rows with all numeric targets</div></div>';
         return;
       }
-      const fmt = (n)=> Number.isFinite(n)? (Math.round(n*100)/100).toString() : '—';
+      const fmt = (n)=> Number.isFinite(n)? (Math.round(n*1000)/1000).toString() : '—';
       summaryEl.innerHTML = `
         <div class="pill"><h4>Total wells</h4><div>${s.counts.total}</div></div>
         <div class="pill"><h4>Producers / Injectors</h4><div>${s.counts.producer} / ${s.counts.injector}</div></div>
         <div class="pill"><h4>Fluids (O/G/W)</h4><div>${s.counts.oil} / ${s.counts.gas} / ${s.counts.water}</div></div>
-        <div class="pill"><h4>Interval ΔZ (min / avg / max)</h4><div>${fmt(s.intervals.min)} / ${fmt(s.intervals.avg)} / ${fmt(s.intervals.max)}</div></div>
-        <div class="pill"><h4>X range</h4><div>${fmt(s.ranges.x[0])} – ${fmt(s.ranges.x[1])}</div></div>
-        <div class="pill"><h4>Y range</h4><div>${fmt(s.ranges.y[0])} – ${fmt(s.ranges.y[1])}</div></div>
-        <div class="pill"><h4>Z start range</h4><div>${fmt(s.ranges.z_start[0])} – ${fmt(s.ranges.z_start[1])}</div></div>
-        <div class="pill"><h4>Z end range</h4><div>${fmt(s.ranges.z_end[0])} – ${fmt(s.ranges.z_end[1])}</div></div>
+        <div class="pill"><h4>Interval ΔZ (min / avg / max) <span class="unit-chip">${unit}</span></h4><div>${fmt(s.intervals.min)} / ${fmt(s.intervals.avg)} / ${fmt(s.intervals.max)}</div></div>
+        <div class="pill"><h4>X range <span class="unit-chip">${unit}</span></h4><div>${fmt(s.ranges.x[0])} – ${fmt(s.ranges.x[1])}</div></div>
+        <div class="pill"><h4>Y range <span class="unit-chip">${unit}</span></h4><div>${fmt(s.ranges.y[0])} – ${fmt(s.ranges.y[1])}</div></div>
+        <div class="pill"><h4>Z start range <span class="unit-chip">${unit}</span></h4><div>${fmt(s.ranges.z_start[0])} – ${fmt(s.ranges.z_start[1])}</div></div>
+        <div class="pill"><h4>Z end range <span class="unit-chip">${unit}</span></h4><div>${fmt(s.ranges.z_end[0])} – ${fmt(s.ranges.z_end[1])}</div></div>
       `;
     }
 
-    // Generate & download
     function generateAndDownload(){
       const wells = collect();
-      const payload = { reservoir_targets: wells };
+      const payload = {
+        crs_information: getCRS(CURRENT_UNIT),
+        reservoir_targets: wells
+      };
       const s = stats(wells);
       renderSummary(s);
 
@@ -348,26 +322,22 @@
       const url = URL.createObjectURL(blob);
       const ts = new Date();
       const pad = (n)=>String(n).padStart(2,'0');
-      const fname = `reservoir_targets_${ts.getFullYear()}${pad(ts.getMonth()+1)}${pad(ts.getDate())}_${pad(ts.getHours())}${pad(ts.getMinutes())}${pad(ts.getSeconds())}.json`;
+      const fname = `reservoir_targets_${CURRENT_UNIT}_${ts.getFullYear()}${pad(ts.getMonth()+1)}${pad(ts.getDate())}_${pad(ts.getHours())}${pad(ts.getMinutes())}${pad(ts.getSeconds())}.json`;
 
       linkEl.href = url;
       linkEl.download = fname;
       linkEl.style.display = wells.length ? 'inline-block' : 'none';
-      fileMetaEl.textContent = wells.length ? `Generated ${wells.length} well(s) • ${sizeKB} KB • File: ${fname}` : 'No valid rows to export.';
+      fileMetaEl.textContent = wells.length
+        ? `Generated ${wells.length} well(s) • ${sizeKB} KB • File: ${fname} • Units: ${CURRENT_UNIT} • crs_information set`
+        : 'No valid rows to export.';
     }
 
-    // === Excel/CSV paste support ===
-    function splitLine(line){
-      if (line.includes('\t')) return line.split('\t');
-      return line.split(',');
-    }
+    function splitLine(line){ return line.includes('\t') ? line.split('\t') : line.split(','); }
     function parseClipboard(text){
       const lines = String(text||'').trim().split(/\r?\n/).filter(l=>l.trim().length>0);
       return lines.map(splitLine);
     }
-    function inputsForRow(tr){
-      return Array.from(tr.querySelectorAll('input,select')); // [name,type,fluid,x,y,z,interval]
-    }
+    function inputsForRow(tr){ return Array.from(tr.querySelectorAll('input,select')); }
     function colIndexInRow(target){
       const tr = target.closest('tr');
       const arr = inputsForRow(tr);
@@ -379,25 +349,24 @@
       const el = cells[colIdx];
       const val = String(raw ?? '').trim();
       switch(colIdx){
-        case 0: el.value = val; break;                       // name
-        case 1: el.value = normalizeType(val); break;        // type
-        case 2: el.value = normalizeFluid(val); break;       // fluid
-        case 3: case 4: {                                    // x,y
+        case 0: el.value = val; break;
+        case 1: el.value = normalizeType(val); break;
+        case 2: el.value = normalizeFluid(val); break;
+        case 3: case 4: {
           const n = toNum(val);
           if (n !== null) el.value = n;
           break;
         }
-        case 5: {                                            // z start (force negative)
+        case 5: {
           const n = toNum(val);
           if (n !== null) el.value = -Math.abs(n);
           break;
         }
-        case 6: {                                            // interval (force positive)
+        case 6: {
           const n = toNum(val);
           if (n !== null) el.value = Math.abs(n);
           break;
         }
-        default: break;
       }
     }
     function pasteTable(startTarget, matrix){
@@ -405,7 +374,6 @@
       const startRowIdx = Array.from(tbody.rows).indexOf(startRowEl);
       const neededRows = startRowIdx + matrix.length;
       ensureRows(neededRows);
-
       for (let r = 0; r < matrix.length; r++){
         const rowEl = tbody.rows[startRowIdx + r];
         const cells = matrix[r];
@@ -415,7 +383,22 @@
       }
     }
 
-    // Events
+    function updateUnitBadges(){
+      document.querySelectorAll('.unit-tag').forEach(el => el.textContent = unitLabel());
+    }
+
+    function convertAllInputs(fromUnit, toUnit){
+      if (fromUnit === toUnit) return;
+      const factor = (fromUnit === 'm' && toUnit === 'ft') ? M_TO_FT : FT_TO_M;
+      [...tbody.rows].forEach(tr => {
+        const [ , , , x, y, z, intv] = tr.querySelectorAll('input,select');
+        const xn = toNum(x.value); if (xn !== null) setRounded(x, xn * factor);
+        const yn = toNum(y.value); if (yn !== null) setRounded(y, yn * factor);
+        const zn = toNum(z.value); if (zn !== null) setRounded(z, -Math.abs(zn * factor)); // keep negative
+        const inN = toNum(intv.value); if (inN !== null) setRounded(intv, Math.abs(inN * factor)); // keep positive
+      });
+    }
+
     addOneBtn.addEventListener('click', ()=> addRow());
     addManyBtn.addEventListener('click', ()=>{
       const n = prompt('How many wells to add? (1–5000)', '10');
@@ -423,16 +406,16 @@
     });
     clearBtn.addEventListener('click', clearAll);
     genBtn.addEventListener('click', generateAndDownload);
+
     tbody.addEventListener('click', (e)=>{
       if (e.target.closest('.remove-btn')) e.target.closest('tr')?.remove();
     });
 
-    // Enforce rules on manual edits
     tbody.addEventListener('change', (e)=>{
       if (!(e.target instanceof HTMLInputElement)) return;
       const { idx } = colIndexInRow(e.target);
-      if (idx === 5) enforceNegativeZInput(e.target);      // Z start
-      if (idx === 6) enforcePositiveIntervalInput(e.target); // Interval
+      if (idx === 5) enforceNegativeZInput(e.target);
+      if (idx === 6) enforcePositiveIntervalInput(e.target);
     });
     tbody.addEventListener('blur', (e)=>{
       if (!(e.target instanceof HTMLInputElement)) return;
@@ -441,7 +424,6 @@
       if (idx === 6) enforcePositiveIntervalInput(e.target);
     }, true);
 
-    // Handle Excel/CSV paste anywhere in the table
     tbody.addEventListener('paste', (e)=>{
       const target = e.target;
       if (!(target instanceof HTMLInputElement) && !(target instanceof HTMLSelectElement)) return;
@@ -449,12 +431,24 @@
       if (!txt) return;
       const matrix = parseClipboard(txt);
       if (matrix.length === 0) return;
-      e.preventDefault(); // distribute values to cells
+      e.preventDefault();
       pasteTable(target, matrix);
     }, true);
 
-    // Init
+    unitSwitch.addEventListener('change', (e)=>{
+      const next = unitSwitch.querySelector('input[name="unit"]:checked')?.value || 'm';
+      if (next === CURRENT_UNIT) return;
+      convertAllInputs(CURRENT_UNIT, next);
+      CURRENT_UNIT = next;
+      updateUnitBadges();
+      renderSummary(stats(collect()));
+      linkEl.style.display = 'none';
+      fileMetaEl.textContent = `Units changed to ${CURRENT_UNIT}. Please Generate JSON again.`;
+    });
+
+    // init
     addRow();
+    updateUnitBadges();
   </script>
 </body>
 </html>
