@@ -1,3 +1,4 @@
+<!-- /index.html -->
 <!-- well-target-generator -->
 <!DOCTYPE html>
 <html lang="en">
@@ -44,7 +45,6 @@
     .download{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
     .download a{text-decoration:none;border:1px solid var(--slb-border);padding:10px 14px;border-radius:12px;color:var(--slb-blue);background:#fff;font-weight:600}
     .kbd{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#eef2ff;color:#3730a3;padding:2px 6px;border-radius:6px;border:1px solid #c7d2fe}
-    /* unit switcher */
     .unit-switch{margin-left:auto;display:flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--slb-border);padding:6px 10px;border-radius:12px}
     .unit-switch label{display:inline-flex;align-items:center;gap:4px;font-size:13px}
     .unit-chip{display:inline-block;font-size:11px;padding:2px 6px;border:1px solid var(--slb-border);border-radius:10px;background:#fff;margin-left:6px}
@@ -96,9 +96,7 @@
               <th style="min-width:160px">Target Z (start)
                 <span class="th-sub">Negative depth (<span class="unit-tag">m</span>)</span>
               </th>
-              <th style="min-width:160px">Interval (ΔZ)
-                <span class="th-sub">Positive thickness (<span class="unit-tag">m</span>)</span>
-              </th>
+              <!-- Interval (ΔZ) column intentionally removed/hidden; fixed to 200 m in logic -->
               <th style="min-width:80px">Actions</th>
             </tr>
           </thead>
@@ -135,12 +133,15 @@
       <td><input type="number" step="any" placeholder="x" aria-label="Target X"></td>
       <td><input type="number" step="any" placeholder="y" aria-label="Target Y"></td>
       <td><input type="number" step="any" placeholder="-6000" aria-label="Target Z start"></td>
-      <td><input type="number" step="any" placeholder="200" aria-label="Interval"></td>
+      <!-- Interval (ΔZ) input removed; value is fixed in script -->
       <td class="action"><button class="remove-btn" title="Remove row">Remove</button></td>
     </tr>
   </template>
 
   <script>
+    // WHY: Keep interval out of UI; always 200 m, auto-converted if unit=ft.
+    const DEFAULT_INTERVAL_M = 200;
+
     // WHY: IDs assume 'ft:1' exists in your reference-data; change UNIT_ID_MAP if different in your environment.
     const UNIT_ID_MAP = {
       m: "qa-weu-des-prod-testing-eu:reference-data--UnitOfMeasure:m:1",
@@ -173,14 +174,13 @@
 
     function addRow(defaults={}){
       const node = rowTpl.content.firstElementChild.cloneNode(true);
-      const [nm, typ, flu, x, y, z, intv] = node.querySelectorAll('input,select');
+      const [nm, typ, flu, x, y, z] = node.querySelectorAll('input,select');
       nm.value = defaults.name ?? '';
       typ.value = defaults.type ?? 'producer';
       flu.value = defaults.fluid ?? 'oil';
       x.value = defaults.x ?? '';
       y.value = defaults.y ?? '';
       z.value = defaults.z ?? '';
-      intv.value = defaults.interval ?? '';
       tbody.appendChild(node);
     }
     function addRows(n){
@@ -223,30 +223,26 @@
       if (n === null){ el.value = ''; return; }
       el.value = -Math.abs(n);
     }
-    function enforcePositiveIntervalInput(el){
-      const n = toNum(el.value);
-      if (n === null){ el.value = ''; return; }
-      el.value = Math.abs(n);
-    }
 
     function collect(){
       const wells = [];
       [...tbody.rows].forEach((tr) => {
-        const [nm, typ, flu, x, y, z, intv] = tr.querySelectorAll('input,select');
+        const [nm, typ, flu, x, y, z] = tr.querySelectorAll('input,select');
         const name = nm.value.trim();
         const type = typ.value;
         const fluid_type = flu.value;
         const xVal = toNum(x.value);
         const yVal = toNum(y.value);
         let zStart = toNum(z.value);
-        let interval = toNum(intv.value);
         if (!name) return;
-        if (xVal===null || yVal===null || zStart===null || interval===null) return;
+        if (xVal===null || yVal===null || zStart===null) return;
 
         zStart = -Math.abs(zStart);
-        interval = Math.abs(interval);
-        const zEnd = zStart - interval;
 
+        // Fixed interval: 200 m, auto-convert to ft if needed.
+        const interval = CURRENT_UNIT === 'm' ? DEFAULT_INTERVAL_M : DEFAULT_INTERVAL_M * M_TO_FT;
+
+        const zEnd = zStart - Math.abs(interval);
         const start = { x: xVal, y: yVal, z: zStart };
         const end   = { x: xVal, y: yVal, z: zEnd };
 
@@ -362,11 +358,7 @@
           if (n !== null) el.value = -Math.abs(n);
           break;
         }
-        case 6: {
-          const n = toNum(val);
-          if (n !== null) el.value = Math.abs(n);
-          break;
-        }
+        default: break;
       }
     }
     function pasteTable(startTarget, matrix){
@@ -377,7 +369,8 @@
       for (let r = 0; r < matrix.length; r++){
         const rowEl = tbody.rows[startRowIdx + r];
         const cells = matrix[r];
-        for (let c = 0; c < cells.length && (startCol + c) < 7; c++){
+        // Max input column index is 5 (name..z)
+        for (let c = 0; c < cells.length && (startCol + c) < 6; c++){
           setCell(rowEl, startCol + c, cells[c]);
         }
       }
@@ -391,12 +384,12 @@
       if (fromUnit === toUnit) return;
       const factor = (fromUnit === 'm' && toUnit === 'ft') ? M_TO_FT : FT_TO_M;
       [...tbody.rows].forEach(tr => {
-        const [ , , , x, y, z, intv] = tr.querySelectorAll('input,select');
+        const [ , , , x, y, z] = tr.querySelectorAll('input,select');
         const xn = toNum(x.value); if (xn !== null) setRounded(x, xn * factor);
         const yn = toNum(y.value); if (yn !== null) setRounded(y, yn * factor);
         const zn = toNum(z.value); if (zn !== null) setRounded(z, -Math.abs(zn * factor)); // keep negative
-        const inN = toNum(intv.value); if (inN !== null) setRounded(intv, Math.abs(inN * factor)); // keep positive
       });
+      // WHY: Interval is fixed in meters; we don't store it in inputs. JSON/summary recomputed with converted interval via collect().
     }
 
     addOneBtn.addEventListener('click', ()=> addRow());
@@ -415,13 +408,11 @@
       if (!(e.target instanceof HTMLInputElement)) return;
       const { idx } = colIndexInRow(e.target);
       if (idx === 5) enforceNegativeZInput(e.target);
-      if (idx === 6) enforcePositiveIntervalInput(e.target);
     });
     tbody.addEventListener('blur', (e)=>{
       if (!(e.target instanceof HTMLInputElement)) return;
       const { idx } = colIndexInRow(e.target);
       if (idx === 5) enforceNegativeZInput(e.target);
-      if (idx === 6) enforcePositiveIntervalInput(e.target);
     }, true);
 
     tbody.addEventListener('paste', (e)=>{
